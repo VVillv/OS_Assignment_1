@@ -16,6 +16,8 @@ void cleanup() {
     /**
      * perform any cleanup you need to do here for global pointers
      **/
+    delete readers;
+    delete writers;
 }
 
 int main(int argc, char** argv) {
@@ -23,17 +25,25 @@ int main(int argc, char** argv) {
     /**
      * check command line arguments
      **/
+    if (argc != 3) {
+        std::cer << "Usage: " << argv[0] << " <input_file> <output_file>" << std::endl;
+    }
     /**
      * process command line arguments
      **/
+    std::string infile = argv[1];
+    std::string outfile = argv[2];
     /**
      * initiliaze the reader and writer classes
      **/
+    writer::init(outfile);
+    reader::init(infile);
     /**
      * initialize the running of each thread. Note you just call run() on each
      * object here, you'll call pthread_create itself in the run function.
      **/
-
+    readers->run();
+    writers->run();
     /**
      *
      * have loop here waiting for the threads to bomplete. Please see

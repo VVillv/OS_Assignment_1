@@ -11,8 +11,25 @@
  **/
 std::ifstream reader::in;
 
-void reader::init(const std::string& name) {}
+void reader::init(const std::string& name) {
+    in.open(name);
+    if (!in.is_open()) {
+        std::cerr << "Failed to open the input file: " << name << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
 
-void reader::run() {}
+void reader::run() {
+    pthread_t thread;
+    pthread_create(&thread, nullptr, runner, nullptr);
+    pthread_join(thread, nullptr);
+}
 
-void* reader::runner(void* arg) { return nullptr; }
+void* reader::runner(void* arg) {
+    std::string line;
+    while (std::getline(in, line)) {
+        writer::append(line);
+    }
+    writer::setfinished();
+    return nullptr; 
+}
