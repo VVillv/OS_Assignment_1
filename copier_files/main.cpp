@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     std::string outfile = argv[2];
 
     writer myWriter(outfile);
-    reader myReader(infile, myWriter)
+    reader myReader(infile, myWriter);
 
     myReader.run();
     myWriter.run();
