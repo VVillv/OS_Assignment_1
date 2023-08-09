@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
      * check command line arguments
      **/
     if (argc != 3) {
-        std::cer << "Usage: " << argv[0] << " <input_file> <output_file>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <input_file> <output_file>" << std::endl;
     }
     /**
      * process command line arguments
