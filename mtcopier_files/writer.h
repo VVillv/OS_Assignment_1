@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <mutex>
 #ifndef WRITER
 #define WRITER
 class writer {
