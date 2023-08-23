@@ -21,15 +21,15 @@ class writer {
      * needs to be static. You can pass in instances into the function as
      * pointers though.
      **/
-    static bool isReadingDone;
-    static std::mutex readMutex;
     static void init(const std::string& name);
     static void* runner(void*);
     void run();
     static void append(const std::string& line);
+    static void setfinished();
 
    private:
     static std::ofstream out;
     static std::deque<std::string> queue;
+    static pthread_mutex_t writerMutex; // Mutex for synchronization
 };
 #endif

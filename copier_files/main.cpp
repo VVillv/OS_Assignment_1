@@ -5,6 +5,7 @@
 #include "reader.h"
 #include "writer.h"
 #include <cstdlib>
+#include <iostream>
 /* global variables if needed go here */
 int main(int argc, char** argv) {
     /* check command line arguments */

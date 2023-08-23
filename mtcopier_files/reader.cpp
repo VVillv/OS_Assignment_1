@@ -10,6 +10,7 @@
  * implement the functions needed for this class
  **/
 std::ifstream reader::in;
+pthread_mutex_t readMutex = PTHREAD_MUTEX_INITIALIZER;
 
 void reader::init(const std::string& name) {
     in.open(name);
@@ -27,9 +28,15 @@ void reader::run() {
 
 void* reader::runner(void* arg) {
     std::string line;
-    while (std::getline(in, line)) {
-        writer::append(line);
+    while (true) {
+        pthread_mutex_lock(&readMutex);
+        if (getline(in, line)) {
+            writer::append(line);
+        } else {
+            pthread_mutex_unlock(&readMutex);
+            break;
+        }
+        pthread_mutex_unlock(&readMutex);
     }
-    writer::setfinished();
-    return nullptr; 
+    return nullptr;
 }
