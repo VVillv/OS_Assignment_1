@@ -21,7 +21,7 @@ void writer::run() {
     clock_t startTime = clock();  // Capture the start time
 
     while (!queue.empty()) {
-        out << queue.front() << std::endl;
+        out << queue.front() << "\n";
         queue.pop_front();
     }
 
