@@ -33,12 +33,11 @@ void* reader::runner(void* arg) {
     while (true) {
         pthread_mutex_lock(&readMutex);
         
-        // Wait until there's a line to read
-        while (!getline(in, line)) {
-            pthread_cond_wait(&readCond, &readMutex);
+        if (!getline(in, line)) {
+            pthread_mutex_unlock(&readMutex);
+            break;
         }
 
-        // If there's a line to read, append it to the writer
         if (!line.empty()) {
             writer::append(line);
         } else {
@@ -47,7 +46,6 @@ void* reader::runner(void* arg) {
         }
         
         pthread_mutex_unlock(&readMutex);
-        pthread_cond_signal(&readCond); // Signal other threads
     }
     return nullptr;
 }

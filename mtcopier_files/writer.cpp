@@ -9,7 +9,7 @@
 std::ofstream writer::out;
 std::deque<std::string> writer::queue;
 pthread_mutex_t writer::writerMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t writerCond = PTHREAD_COND_INITIALIZER;
+pthread_cond_t writer::writerCond = PTHREAD_COND_INITIALIZER;
 
 /**
  * implement these functions requred for the writer class
@@ -46,7 +46,9 @@ void* writer::runner(void* arg) {
 void writer::append(const std::string& line) {
     pthread_mutex_lock(&writerMutex); // Lock the mutex to safely push to the queue
     queue.push_back(line);
+    pthread_cond_signal(&writerCond); // Signal the writer thread
     pthread_mutex_unlock(&writerMutex); // Unlock the mutex after pushing to the queue
 }
 
-void writer::setfinished() {}
+void writer::setfinished() {
+}
