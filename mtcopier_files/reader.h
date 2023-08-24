@@ -44,5 +44,6 @@ class reader {
      * There may be other private instance data you need so declare those here.
      **/
     static pthread_mutex_t readMutex; // Mutex for synchronization
+    static pthread_cond_t readCond;   // Condition variable for synchronization
 };
 #endif
