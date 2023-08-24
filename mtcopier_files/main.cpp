@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
      * process command line arguments
      **/
     int num_threads = std::stoi(argv[1]);
-    std::string infile = argv[1];
-    std::string outfile = argv[2];
+    std::string infile = argv[2];
+    std::string outfile = argv[3];
     /**
      * initiliaze the reader and writer classes
      **/
@@ -53,8 +53,8 @@ int main(int argc, char** argv) {
      * what need to be done here
       **/
     for (int i = 0; i < num_threads; ++i) {
-    readers[i].run();
-    writers[i].run();
+        readers[i].run();
+        writers[i].run();
     }
     return EXIT_SUCCESS;
 }
