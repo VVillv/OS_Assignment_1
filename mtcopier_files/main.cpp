@@ -16,8 +16,8 @@ void cleanup() {
     /**
      * perform any cleanup you need to do here for global pointers
      **/
-    delete readers;
-    delete writers;
+    delete[] readers;
+    delete[] writers;
 }
 
 int main(int argc, char** argv) {
@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
      **/
     if (argc != 4) {
         std::cerr << "Usage: " << argv[0] << " <num_threads> <input_file> <output_file>" << std::endl;
+        return EXIT_FAILURE;
     }
     /**
      * process command line arguments
