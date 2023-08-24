@@ -30,27 +30,23 @@ void writer::run() {
 
 void* writer::runner(void* arg) {
     while (true) {
-        pthread_mutex_lock(&writerMutex);
-
-        // Wait until there's a line to write
-        while (queue.empty()) {
-            pthread_cond_wait(&writerCond, &writerMutex);
+        pthread_mutex_lock(&writerMutex); // Lock the mutex to safely access the queue
+        if (!queue.empty()) {
+            out << queue.front() << std::endl;
+            queue.pop_front();
+        } else {
+            pthread_mutex_unlock(&writerMutex); // Unlock the mutex before breaking out of the loop
+            break;
         }
-
-        out << queue.front() << std::endl;
-        queue.pop_front();
-
-        pthread_mutex_unlock(&writerMutex);
-        pthread_cond_signal(&writerCond); // Signal other threads
+        pthread_mutex_unlock(&writerMutex); // Unlock the mutex after processing a line
     }
-    return nullptr;
+    return nullptr; 
 }
 
 void writer::append(const std::string& line) {
     pthread_mutex_lock(&writerMutex); // Lock the mutex to safely push to the queue
     queue.push_back(line);
     pthread_mutex_unlock(&writerMutex); // Unlock the mutex after pushing to the queue
-    pthread_cond_signal(&writerCond); // Signal the runner thread that there's a new line to write
 }
 
 void writer::setfinished() {}
