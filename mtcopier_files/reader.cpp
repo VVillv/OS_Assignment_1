@@ -3,8 +3,8 @@
  * Principles
  **/
 #include "reader.h"
-#include <ctime> 
 #include "writer.h"
+#include <ctime>  // Include the <ctime> header for clock()
 
 /**
  * implement the functions needed for this class
@@ -29,26 +29,19 @@ void reader::run() {
 }
 
 void* reader::runner(void* arg) {
+    clock_t startLock, endLock, startRead, endRead;
     std::string line;
     while (true) {
-        clock_t start = clock(); // Start the clock
+        startLock = clock();  // Start timing for acquiring the lock
         pthread_mutex_lock(&readMutex);
-        
-        // Wait until there's a line to read
-        while (!getline(in, line)) {
-            pthread_cond_wait(&readCond, &readMutex);
-        }
+        endLock = clock();  // End timing for acquiring the lock
 
-        clock_t end = clock(); // Stop the clock
-        clock_t duration = end - start;
-        double time_taken = ((double)duration) / CLOCKS_PER_SEC; // Convert to seconds
-
-        std::cout << "Time taken to read a line: " << time_taken << " seconds." << std::endl;
-
+        startRead = clock();  // Start timing for reading
         if (!getline(in, line)) {
             pthread_mutex_unlock(&readMutex);
             break;
         }
+        endRead = clock();  // End timing for reading
 
         if (!line.empty()) {
             writer::append(line);
@@ -59,5 +52,13 @@ void* reader::runner(void* arg) {
         
         pthread_mutex_unlock(&readMutex);
     }
+
+    // Convert clock cycles to seconds and print the timings
+    double lockTime = (endLock - startLock) / (double)CLOCKS_PER_SEC;
+    double readTime = (endRead - startRead) / (double)CLOCKS_PER_SEC;
+
+    std::cout << "Time taken to acquire the lock: " << lockTime << " seconds." << std::endl;
+    std::cout << "Time taken to read a line: " << readTime << " seconds." << std::endl;
+
     return nullptr;
 }

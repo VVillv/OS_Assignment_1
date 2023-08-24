@@ -11,6 +11,8 @@
  **/
 reader* readers;
 writer* writers;
+bool printTiming = false;  // Global variable to determine if timing should be printed
+
 
 void cleanup() {
     /**
@@ -25,8 +27,10 @@ int main(int argc, char** argv) {
     /**
      * check command line arguments
      **/
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <num_threads> <input_file> <output_file>" << std::endl;
+    if (argc == 5 && std::string(argv[4]) == "-t") {
+        printTiming = true;
+    } else if (argc != 4) {
+        std::cerr << "Usage: " << argv[0] << " <num_threads> <input_file> <output_file> [-t]" << std::endl;
         return EXIT_FAILURE;
     }
     /**

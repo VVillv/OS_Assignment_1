@@ -5,7 +5,6 @@
 #include "writer.h"
 #include "reader.h"
 #include <pthread.h>
-#include <ctime>
 
 std::ofstream writer::out;
 std::deque<std::string> writer::queue;
@@ -30,32 +29,45 @@ void writer::run() {
 }
 
 void* writer::runner(void* arg) {
+    clock_t startLock, endLock, startWrite, endWrite;  // Declare timing variables
+
     while (true) {
+        startLock = clock();
         pthread_mutex_lock(&writerMutex); // Lock the mutex to safely access the queue
+        endLock = clock();
+
         if (!queue.empty()) {
+            startWrite = clock();
             out << queue.front() << std::endl;
+            endWrite = clock();
             queue.pop_front();
         } else {
             pthread_mutex_unlock(&writerMutex); // Unlock the mutex before breaking out of the loop
             break;
         }
         pthread_mutex_unlock(&writerMutex); // Unlock the mutex after processing a line
+
+        double lockTime = (endLock - startLock) / (double)CLOCKS_PER_SEC;
+        double writeTime = (endWrite - startWrite) / (double)CLOCKS_PER_SEC;
+
+        std::cout << "Time taken to lock: " << lockTime << " seconds." << std::endl;
+        std::cout << "Time taken to write a line: " << writeTime << " seconds." << std::endl;
     }
     return nullptr; 
 }
 
 void writer::append(const std::string& line) {
-    clock_t start = clock(); // Start the clock
+    clock_t startAppend, endAppend;
 
+    startAppend = clock();
     pthread_mutex_lock(&writerMutex); // Lock the mutex to safely push to the queue
     queue.push_back(line);
     pthread_cond_signal(&writerCond); // Signal the writer thread
     pthread_mutex_unlock(&writerMutex); // Unlock the mutex after pushing to the queue
-    clock_t end = clock(); // Stop the clock
-    clock_t duration = end - start;
-    double time_taken = ((double)duration) / CLOCKS_PER_SEC; // Convert to seconds
+    endAppend = clock();
 
-    std::cout << "Time taken to append a line: " << time_taken << " seconds." << std::endl;
+    double appendTime = (endAppend - startAppend) / (double)CLOCKS_PER_SEC;
+    std::cout << "Time taken to append a line: " << appendTime << " seconds." << std::endl;
 }
 
 void writer::setfinished() {

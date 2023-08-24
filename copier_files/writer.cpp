@@ -4,7 +4,7 @@
  **/
 
 #include "writer.h"
-#include <ctime>
+#include <ctime>  // Include the ctime header
 
 /**
  * provide your implementation for the writer functions here
@@ -18,18 +18,18 @@ writer::writer(const std::string& name) {
 }
 
 void writer::run() {
-    clock_t start = clock(); // Start the clock for the entire writing process
+    clock_t startTime = clock();  // Capture the start time
 
     while (!queue.empty()) {
         out << queue.front() << std::endl;
         queue.pop_front();
     }
-    
-    clock_t end = clock(); // Stop the clock for the entire process
-    clock_t duration = end - start;
-    double time_taken = ((double)duration) / CLOCKS_PER_SEC; // Convert to seconds
 
-    std::cout << "Time taken to write all lines: " << time_taken << " seconds." << std::endl;
+    clock_t endTime = clock();  // Capture the end time
+
+    double writeTime = (endTime - startTime) / (double)CLOCKS_PER_SEC;  // Calculate writing duration
+
+    std::cout << "Time taken to write: " << writeTime << " seconds." << std::endl;  // Print writing duration
 
     out.close();
 }
