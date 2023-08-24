@@ -3,7 +3,7 @@
  * Principles
  **/
 #include "reader.h"
-
+#include <ctime> 
 #include "writer.h"
 
 /**
@@ -31,8 +31,20 @@ void reader::run() {
 void* reader::runner(void* arg) {
     std::string line;
     while (true) {
+        clock_t start = clock(); // Start the clock
         pthread_mutex_lock(&readMutex);
         
+        // Wait until there's a line to read
+        while (!getline(in, line)) {
+            pthread_cond_wait(&readCond, &readMutex);
+        }
+
+        clock_t end = clock(); // Stop the clock
+        clock_t duration = end - start;
+        double time_taken = ((double)duration) / CLOCKS_PER_SEC; // Convert to seconds
+
+        std::cout << "Time taken to read a line: " << time_taken << " seconds." << std::endl;
+
         if (!getline(in, line)) {
             pthread_mutex_unlock(&readMutex);
             break;
