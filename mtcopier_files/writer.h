@@ -31,5 +31,6 @@ class writer {
     static std::ofstream out;
     static std::deque<std::string> queue;
     static pthread_mutex_t writerMutex; // Mutex for synchronization
+    static pthread_cond_t writerCond; // Condition variable for synchronization
 };
 #endif

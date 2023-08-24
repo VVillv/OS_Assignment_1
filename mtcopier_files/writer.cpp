@@ -8,7 +8,8 @@
 
 std::ofstream writer::out;
 std::deque<std::string> writer::queue;
-pthread_mutex_t writeMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t writer::writerMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t writerCond = PTHREAD_COND_INITIALIZER;
 
 /**
  * implement these functions requred for the writer class

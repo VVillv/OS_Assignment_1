@@ -11,6 +11,7 @@
  **/
 std::ifstream reader::in;
 pthread_mutex_t reader::readMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t reader::readCond = PTHREAD_COND_INITIALIZER;
 
 
 void reader::init(const std::string& name) {
@@ -31,13 +32,22 @@ void* reader::runner(void* arg) {
     std::string line;
     while (true) {
         pthread_mutex_lock(&readMutex);
-        if (getline(in, line)) {
+        
+        // Wait until there's a line to read
+        while (!getline(in, line)) {
+            pthread_cond_wait(&readCond, &readMutex);
+        }
+
+        // If there's a line to read, append it to the writer
+        if (!line.empty()) {
             writer::append(line);
         } else {
             pthread_mutex_unlock(&readMutex);
             break;
         }
+        
         pthread_mutex_unlock(&readMutex);
+        pthread_cond_signal(&readCond); // Signal other threads
     }
     return nullptr;
 }
